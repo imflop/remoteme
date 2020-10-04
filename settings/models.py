@@ -9,24 +9,14 @@ class KeyItem:
     Фабрика настроек
     Возвращает значения настройки по ключу
     """
-    # Максимальное колличество ВИП объявлений которые можно подать
     MAX_VIP_ADVERTS: str = 'MAX_VIP_ADVERTS'
-    # Максимальное колличество закрепленных объявлений которые можно подать
     MAX_PIN_ADVERTS: str = 'MAX_PIN_ADVERTS'
-    # Максимальный период на который можно подать ВИП объявление
     MAX_VIP_ADVERTS_PERIOD: str = 'MAX_VIP_ADVERTS_PERIOD'
-    # Максимальное колличество закрепленный объявлений которые можно подать
     MAX_PIN_ADVERTS_PERIOD: str = 'MAX_PIN_POST_PERIOD'
-    # Можно подавать ВИП объявления из ЛК
     ADD_VIP_ADVERTS: str = 'ADD_VIP_POST'
-    # Максимально колличество коментариев отображаемых в сайдбаре
     MAX_SIDEBAR_COMMENTS: str = 'MAX_SIDEBAR_COMMENTS'
-    # Колличество объявлений на странице
     ADVERTS_PER_PAGE: str = 'ADVERTS_PER_PAGE'
-    # Колличество постов блога на странице
     BLOG_POST_PER_PAGE: str = 'BLOG_POST_PER_PAGE'
-    # Заголовок для страницы списка статей
-    BLOG_LIST_PAGE_TITLE: str = 'BLOG_LIST_PAGE_TITLE'
 
     ITEMS = (
         MAX_VIP_ADVERTS,
@@ -37,7 +27,6 @@ class KeyItem:
         MAX_SIDEBAR_COMMENTS,
         ADVERTS_PER_PAGE,
         BLOG_POST_PER_PAGE,
-        BLOG_LIST_PAGE_TITLE,
     )
 
     CHOICES = (
@@ -46,7 +35,6 @@ class KeyItem:
         (MAX_SIDEBAR_COMMENTS, 'Максимально колличество коментариев в сайдбаре'),
         (ADVERTS_PER_PAGE, 'Колличество объявлений на странице'),
         (BLOG_POST_PER_PAGE, 'Колличество постов блога на странице'),
-        (BLOG_LIST_PAGE_TITLE, 'Заголовок (title) для страницы списка статей')
     )
 
 
