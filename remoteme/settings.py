@@ -15,12 +15,12 @@ import environ
 from pathlib import Path
 
 
-ROOT_DIR = environ.Path(__file__) - 1
+PROJECT_DIR = environ.Path(__file__) - 1
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(DEBUG=(bool, False))
-env.read_env(os.path.join(ROOT_DIR, '.env'))
+env.read_env(os.path.join(PROJECT_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -46,13 +46,19 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    'taggit',
+    'django_select2',
+    'django_filters',
+]
 
 LOCAL_APPS = [
     'settings',
+    'jobs',
+    'users',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS  + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,10 +74,15 @@ ROOT_URLCONF = 'remoteme.urls'
 
 TEMPLATES = [
     {
+        # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
+        'DIRS': [f'{BASE_DIR}/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
+            # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
+            'debug': '',
+            # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -111,11 +122,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.User'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -127,6 +140,44 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+# https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/assets/'
+
+STATICFILES_DIRS = [f'{BASE_DIR}/assets']
+
+
+# TAGGIT
+# ------------------------------------------------------------------------------
+TAGGIT_CASE_INSENSITIVE = True
+
+EMPTY_CHOICE_LABEL = 'Не выбрано'
+
+
+# CACHE
+# ------------------------------------------------------------------------------
+CACHES = {
+    'default': {
+        'BACKEND': env.CACHE_SCHEMES['rediscache'],
+        'LOCATION': f'{env.str("REDIS_URL")}/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PICKLE_VERSION': -1
+        },
+        'KEY_PREFIX': 'remoteme'
+    },
+    'select2': {
+        'BACKEND': env.CACHE_SCHEMES['rediscache'],
+        'LOCATION': f'{env.str("REDIS_URL")}/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PICKLE_VERSION': -1
+        },
+        'KEY_PREFIX': 'select2'
+    },
+}
+
+
+# SELECT2
+# ------------------------------------------------------------------------------
+SELECT2_CACHE_BACKEND = "select2"
