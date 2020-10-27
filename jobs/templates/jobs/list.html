@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    {% for advert in filter.qs %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'jobs:detail' advert.level advert.uuid %}">{{ advert.level }} {{ advert.scope }}</a>
+                </h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    &dollar;{{ advert.salary_from }}&dash;&dollar;{{ advert.salary_to }}
+                </h6>
+                {% for s in advert.stack.all %}
+                    <li class="list-inline-item">
+                        <a href="#">
+                            <span class="badge badge-warning">{{ s.name }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block filters %}
+    <div class="card">
+        <div class="card-body">
+            <form method="get">
+                <div class="form-group">
+                    {{ filter.form.level }}
+                </div>
+                <div class="form-group">
+                    {{ filter.form.scope }}
+                </div>
+                <button type="submit" class="btn btn-block btn-primary">Подобрать</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
