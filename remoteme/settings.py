@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 import environ
+import sentry_sdk
 from pathlib import Path
+
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 
 PROJECT_DIR = environ.Path(__file__) - 1
@@ -144,7 +149,31 @@ USE_TZ = True
 
 STATIC_URL = '/assets/'
 
+STATIC_ROOT = f'{BASE_DIR}/staticfiles'
+
 STATICFILES_DIRS = [f'{BASE_DIR}/assets']
+
+
+# DJANGO DEBUG TOOLBAR
+# ------------------------------------------------------------------------------
+if DEBUG:
+    MIDDLEWARE += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+    INSTALLED_APPS += ('debug_toolbar',)
+
+    INTERNAL_IPS = ('127.0.0.1',)
+else:
+    # Sentry CONFIGURATION
+    # ------------------------------------------------------------------------------
+    sentry_sdk.init(
+        dsn=env.str('SENTRY_DSN', default=''),
+        integrations=[DjangoIntegration(), CeleryIntegration(), RedisIntegration()],
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
 
 
 # TAGGIT

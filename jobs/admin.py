@@ -15,8 +15,8 @@ class ScopeAdmin(admin.ModelAdmin):
 @admin.register(Advert)
 class AdvertAdmin(CreateUpdateDateTimeAdvertAdmin, admin.ModelAdmin):
     list_display = (
-        'id', 'short_description', 'level', 'scope', 'salary_from', 'salary_to',
-        'company_name', 'tech_stack', 'city', 'created_at', 'updated_at'
+        'id', 'is_moderate', 'short_description', 'level', 'scope', 'salary_from',
+        'salary_to', 'company_name', 'tech_stack', 'city', 'created_at', 'updated_at'
     )
     list_display_links = ('id', 'short_description')
     list_filter = ('created_at', 'scope')

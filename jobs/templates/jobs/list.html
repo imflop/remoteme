@@ -2,31 +2,39 @@
 
 
 {% block content %}
-    {% for advert in filter.qs %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{% url 'jobs:detail' advert.level advert.uuid %}">{{ advert.level }} {{ advert.scope }}</a>
-                </h5>
-                <h6 class="card-subtitle mb-2 text-muted">
-                    &dollar;{{ advert.salary_from }}&dash;&dollar;{{ advert.salary_to }}
-                </h6>
-                {% for s in advert.stack.all %}
-                    <li class="list-inline-item">
-                        <a href="#">
-                            <span class="badge badge-warning">{{ s.name }}</span>
+
+    <div class="infinite-container">
+        {% for advert in advert_list %}
+            <div class="card mb-3 infinite-item">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'jobs:detail' advert.level advert.uuid %}">
+                            {{ advert.level }} {{ advert.scope }}
                         </a>
-                    </li>
-                {% endfor %}
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        &dollar;{{ advert.salary_from }}&dash;&dollar;{{ advert.salary_to }}
+                    </h6>
+                    {% for s in advert.stack.all %}
+                        <li class="list-inline-item">
+                            <a href="{% url 'jobs:stack' s.slug %}">
+                                <span class="badge badge-warning">{{ s.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
+
+    {% include "blocks/paginator.html" %}
+
 {% endblock %}
 
 {% block filters %}
     <div class="card">
         <div class="card-body">
-            <form method="get">
+            <form method="get" class="mb-3">
                 <div class="form-group">
                     {{ filter.form.level }}
                 </div>
@@ -35,6 +43,31 @@
                 </div>
                 <button type="submit" class="btn btn-block btn-primary">Подобрать</button>
             </form>
+
+            <form action="{% url "jobs:search" %}">
+                <div class="form-group">
+                    <input class="form-control" id="search" name="q" type="text" placeholder="...">
+                </div>
+                <button type="submit" class="btn btn-block btn-primary">Поиск</button>
+            </form>
         </div>
     </div>
 {% endblock %}
+
+
+{#{% load static %}#}
+{#{% block js %}#}
+{#    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>#}
+{#    <script src="{% static 'js/infinite.min.js' %}"></script>#}
+{#    <script>#}
+{#        const infinite = new Waypoint.Infinite({#}
+{#            element: $('.infinite-container')[0],#}
+{#            onBeforePageLoad: function() {#}
+{#                $('.loading').show();#}
+{#            },#}
+{#            onAfterPageLoad: function($items) {#}
+{#                $('.loading').hide();#}
+{#            }#}
+{#        });#}
+{#    </script>#}
+{#{% endblock %}#}

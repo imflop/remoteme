@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /users/
+Allow: /
+Host: https://remoteme.dev/
