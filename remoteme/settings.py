@@ -103,7 +103,7 @@ WSGI_APPLICATION = 'remoteme.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+# ------------------------------------------------------------------------------
 DATABASES = {
     'default': env.db()
 }
@@ -111,7 +111,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
+# ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -132,6 +132,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
+# ------------------------------------------------------------------------------
 
 LANGUAGE_CODE = 'ru'
 
@@ -144,8 +145,12 @@ USE_L10N = True
 USE_TZ = True
 
 
+EMPTY_CHOICE_LABEL = 'Не выбрано'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
+# ------------------------------------------------------------------------------
 
 STATIC_URL = '/assets/'
 
@@ -180,8 +185,6 @@ else:
 # ------------------------------------------------------------------------------
 TAGGIT_CASE_INSENSITIVE = True
 
-EMPTY_CHOICE_LABEL = 'Не выбрано'
-
 
 # CACHE
 # ------------------------------------------------------------------------------
@@ -210,3 +213,21 @@ CACHES = {
 # SELECT2
 # ------------------------------------------------------------------------------
 SELECT2_CACHE_BACKEND = "select2"
+
+
+# CELERY
+# ------------------------------------------------------------------------------
+# Celery
+# ------------------------------------------------------------------------------
+CELERY_BROKER_URL = f'{env.str("REDIS_URL")}/0'
+CELERY_RESULT_BACKEND = f'{env.str("REDIS_URL")}/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    'parser-every-360-seconds': {
+        'task': 'jobs.tasks.load_hh_data',
+        'schedule': 360.0
+    },
+}

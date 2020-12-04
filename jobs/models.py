@@ -68,7 +68,8 @@ class Advert(CreateUpdateDateTimeAbstract):
     salary_to = models.PositiveIntegerField(
         verbose_name=_('Зарплата до'),
         help_text=_('Уровень зарплаты до'),
-        blank=True
+        blank=True,
+        null=True
     )
     company_name = models.CharField(
         verbose_name=_('Название компании'),
@@ -81,6 +82,7 @@ class Advert(CreateUpdateDateTimeAbstract):
         max_length=128,
         validators=[MaxLengthValidator],
         blank=True,
+        null=True,
         help_text=_('Страна')
     )
     city = models.CharField(
