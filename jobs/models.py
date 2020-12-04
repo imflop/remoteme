@@ -9,6 +9,7 @@ from taggit.managers import TaggableManager
 from unidecode import unidecode
 
 from jobs.collections import LevelType
+from jobs.managers import AdvertManager
 from utils.models import CreateUpdateDateTimeAbstract
 
 
@@ -67,7 +68,8 @@ class Advert(CreateUpdateDateTimeAbstract):
     salary_to = models.PositiveIntegerField(
         verbose_name=_('Зарплата до'),
         help_text=_('Уровень зарплаты до'),
-        blank=True
+        blank=True,
+        null=True
     )
     company_name = models.CharField(
         verbose_name=_('Название компании'),
@@ -77,9 +79,10 @@ class Advert(CreateUpdateDateTimeAbstract):
     )
     country = models.CharField(
         verbose_name=_('Страна'),
-        max_length=32,
+        max_length=128,
         validators=[MaxLengthValidator],
         blank=True,
+        null=True,
         help_text=_('Страна')
     )
     city = models.CharField(
@@ -107,6 +110,8 @@ class Advert(CreateUpdateDateTimeAbstract):
         verbose_name=_('Технологический стэк'),
         help_text=_('Разделяемый запятой запрашиваемый стэк технологий')
     )
+
+    objects = AdvertManager.as_manager()
 
     class Meta:
         ordering = ('-created_at',)

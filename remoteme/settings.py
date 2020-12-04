@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 import environ
+import sentry_sdk
 from pathlib import Path
+
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 
 PROJECT_DIR = environ.Path(__file__) - 1
@@ -98,7 +103,7 @@ WSGI_APPLICATION = 'remoteme.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+# ------------------------------------------------------------------------------
 DATABASES = {
     'default': env.db()
 }
@@ -106,7 +111,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
+# ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -127,6 +132,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
+# ------------------------------------------------------------------------------
 
 LANGUAGE_CODE = 'ru'
 
@@ -139,19 +145,45 @@ USE_L10N = True
 USE_TZ = True
 
 
+EMPTY_CHOICE_LABEL = 'Не выбрано'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
+# ------------------------------------------------------------------------------
 
 STATIC_URL = '/assets/'
 
+STATIC_ROOT = f'{BASE_DIR}/staticfiles'
+
 STATICFILES_DIRS = [f'{BASE_DIR}/assets']
+
+
+# DJANGO DEBUG TOOLBAR
+# ------------------------------------------------------------------------------
+if DEBUG:
+    MIDDLEWARE += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )
+    INSTALLED_APPS += ('debug_toolbar',)
+
+    INTERNAL_IPS = ('127.0.0.1',)
+else:
+    # Sentry CONFIGURATION
+    # ------------------------------------------------------------------------------
+    sentry_sdk.init(
+        dsn=env.str('SENTRY_DSN', default=''),
+        integrations=[DjangoIntegration(), CeleryIntegration(), RedisIntegration()],
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
 
 
 # TAGGIT
 # ------------------------------------------------------------------------------
 TAGGIT_CASE_INSENSITIVE = True
-
-EMPTY_CHOICE_LABEL = 'Не выбрано'
 
 
 # CACHE
@@ -181,3 +213,21 @@ CACHES = {
 # SELECT2
 # ------------------------------------------------------------------------------
 SELECT2_CACHE_BACKEND = "select2"
+
+
+# CELERY
+# ------------------------------------------------------------------------------
+# Celery
+# ------------------------------------------------------------------------------
+CELERY_BROKER_URL = f'{env.str("REDIS_URL")}/0'
+CELERY_RESULT_BACKEND = f'{env.str("REDIS_URL")}/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    'parser-every-360-seconds': {
+        'task': 'jobs.tasks.load_hh_data',
+        'schedule': 360.0
+    },
+}
