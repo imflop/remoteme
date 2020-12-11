@@ -217,14 +217,12 @@ SELECT2_CACHE_BACKEND = "select2"
 
 # CELERY
 # ------------------------------------------------------------------------------
-# Celery
-# ------------------------------------------------------------------------------
 CELERY_BROKER_URL = f'{env.str("REDIS_URL")}/0'
-CELERY_RESULT_BACKEND = f'{env.str("REDIS_URL")}/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = TIME_ZONE
+result_backend = f'{env.str("REDIS_URL")}/0'
+accept_content = ['json']
+task_serializer = 'json'
+result_serializer = 'json'
+timezone = TIME_ZONE
 CELERY_BEAT_SCHEDULE = {
     'parser-every-360-seconds': {
         'task': 'jobs.tasks.load_hh_data',
