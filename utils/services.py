@@ -73,10 +73,10 @@ class AdvertService:
         salary = 0
         if self.item.get('salary'):
             salary = {
-                'from': self.item['salary'].get('from'),
-                'to': self.item['salary'].get('to')
+                'from': self.item['salary'].get('from') if self.item['salary'].get('from') else 0,
+                'to': self.item['salary'].get('to') if self.item['salary'].get('to') else 0
             }.get(param)
-        return salary if salary else 0
+        return salary
 
     def _get_company_name(self) -> str:
         name = ""
