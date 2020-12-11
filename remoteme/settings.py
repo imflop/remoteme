@@ -14,6 +14,7 @@ import os
 import environ
 import sentry_sdk
 from pathlib import Path
+from celery.schedules import cronfield, crontab
 
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
@@ -224,8 +225,8 @@ task_serializer = 'json'
 result_serializer = 'json'
 timezone = TIME_ZONE
 CELERY_BEAT_SCHEDULE = {
-    'parser-every-360-seconds': {
+    'parser-5-min-after-midnight': {
         'task': 'jobs.tasks.load_hh_data',
-        'schedule': 360.0
+        'schedule': crontab(minute=5, hour=0),
     },
 }
