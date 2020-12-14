@@ -11,15 +11,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+from pathlib import Path
+
 import environ
 import sentry_sdk
-from pathlib import Path
-from celery.schedules import cronfield, crontab
-
-from sentry_sdk.integrations.django import DjangoIntegration
+from celery.schedules import crontab
 from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
-
 
 PROJECT_DIR = environ.Path(__file__) - 1
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -192,7 +191,7 @@ TAGGIT_CASE_INSENSITIVE = True
 CACHES = {
     'default': {
         'BACKEND': env.CACHE_SCHEMES['rediscache'],
-        'LOCATION': f'{env.str("REDIS_URL")}/0',
+        'LOCATION': f'{env.str("REDIS_URL")}/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'PICKLE_VERSION': -1
@@ -201,7 +200,7 @@ CACHES = {
     },
     'select2': {
         'BACKEND': env.CACHE_SCHEMES['rediscache'],
-        'LOCATION': f'{env.str("REDIS_URL")}/1',
+        'LOCATION': f'{env.str("REDIS_URL")}/2',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'PICKLE_VERSION': -1
@@ -224,9 +223,37 @@ accept_content = ['json']
 task_serializer = 'json'
 result_serializer = 'json'
 timezone = TIME_ZONE
+# TODO: move to celery.py
 CELERY_BEAT_SCHEDULE = {
     'parser-5-min-after-midnight': {
         'task': 'jobs.tasks.load_hh_data',
         'schedule': crontab(minute=5, hour=0),
     },
+}
+
+
+# LOGGING
+# ------------------------------------------------------------------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] [%(funcName)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'remoteme': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
 }

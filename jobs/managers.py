@@ -7,5 +7,5 @@ class AdvertManager(QuerySet):
     """
 
     def only_moderated(self):
-        return self.select_related("scope").filter(is_moderate=True)
+        return self.prefetch_related("stack").select_related("scope").filter(is_moderate=True)
 

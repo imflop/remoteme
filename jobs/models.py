@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from taggit.managers import TaggableManager
 from unidecode import unidecode
 
-from jobs.collections import LevelType
+from jobs.collections import LevelType, CurrencyType
 from jobs.managers import AdvertManager
 from utils.models import CreateUpdateDateTimeAbstract
 
@@ -70,6 +70,12 @@ class Advert(CreateUpdateDateTimeAbstract):
         help_text=_('Уровень зарплаты до'),
         blank=True,
         null=True
+    )
+    currency = models.CharField(
+        verbose_name=_('Валюта'),
+        max_length=16,
+        choices=CurrencyType.CHOICES,
+        default=CurrencyType.USD
     )
     company_name = models.CharField(
         verbose_name=_('Название компании'),
