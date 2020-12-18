@@ -21,5 +21,5 @@ def load_hh_data():
                     count -= 1
             msg = f"{count} items are saved"
     else:
-        msg = f"File by {AdvertService.get_file_path()} is not found"
+        msg = f"File by  {AdvertService.get_file_path()} is not found"
     return msg
