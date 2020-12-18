@@ -12,6 +12,9 @@
                         <a href="{% url 'jobs:detail' advert.level advert.uuid %}">
                             {{ advert.level }} {{ advert.scope }}
                         </a>
+                        {% if user.is_superuser %}
+                            <a href="#" class="float-right">✏️</a>
+                        {% endif %}
                     </h5>
                     <h6 class="card-subtitle mb-2 text-muted">
                         {% currency_icon advert.currency as ci %}
