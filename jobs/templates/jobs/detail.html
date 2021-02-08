@@ -1,11 +1,15 @@
 {% extends "base.html" %}
+{% load currency %}
 
 
 {% block content %}
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">{{ advert.level }} {{ advert.scope }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ advert.salary_from }}&mdash;{{ advert.salary_to }}</h6>
+            <h6 class="card-subtitle mb-2 text-muted">
+                {% currency_icon advert.currency as ci %}
+                {{ ci }}&nbsp;{{ advert.salary_from }}&mdash;{{ advert.salary_to }}
+            </h6>
             {% for s in advert.stack.all %}
                 <li class="list-inline-item">
                     <a href="#">

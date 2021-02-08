@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load currency %}
 
 
 {% block content %}
@@ -11,9 +12,13 @@
                         <a href="{% url 'jobs:detail' advert.level advert.uuid %}">
                             {{ advert.level }} {{ advert.scope }}
                         </a>
+                        {% if user.is_superuser %}
+                            <a href="#" class="float-right">✏️</a>
+                        {% endif %}
                     </h5>
                     <h6 class="card-subtitle mb-2 text-muted">
-                        &dollar;{{ advert.salary_from }}&dash;&dollar;{{ advert.salary_to }}
+                        {% currency_icon advert.currency as ci %}
+                        {{ ci }}&nbsp;{{ advert.salary_from }}&dash;{{ advert.salary_to }}
                     </h6>
                     {% for s in advert.stack.all %}
                         <li class="list-inline-item">
@@ -46,6 +51,7 @@
 
             <form action="{% url "jobs:search" %}">
                 <div class="form-group">
+                    <label for="search" class="sr-only">Search</label>
                     <input class="form-control" id="search" name="q" type="text" placeholder="...">
                 </div>
                 <button type="submit" class="btn btn-block btn-primary">Поиск</button>
@@ -53,21 +59,3 @@
         </div>
     </div>
 {% endblock %}
-
-
-{#{% load static %}#}
-{#{% block js %}#}
-{#    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>#}
-{#    <script src="{% static 'js/infinite.min.js' %}"></script>#}
-{#    <script>#}
-{#        const infinite = new Waypoint.Infinite({#}
-{#            element: $('.infinite-container')[0],#}
-{#            onBeforePageLoad: function() {#}
-{#                $('.loading').show();#}
-{#            },#}
-{#            onAfterPageLoad: function($items) {#}
-{#                $('.loading').hide();#}
-{#            }#}
-{#        });#}
-{#    </script>#}
-{#{% endblock %}#}

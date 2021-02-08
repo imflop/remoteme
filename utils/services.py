@@ -7,7 +7,7 @@ from typing import List, Optional, AnyStr
 
 from taggit.models import Tag
 
-from jobs.collections import LevelType
+from jobs.collections import LevelType, CurrencyType
 from jobs.models import Advert, Scope
 
 
@@ -23,7 +23,7 @@ class AdvertService:
     def get_file_path(cls) -> str:
         pattern = f"hh_{datetime.now().strftime('%Y-%m-%d')}*.json"
         result = fnmatch.filter(os.listdir("/tmp"), pattern)
-        return f"/tmp/{result[0]}"
+        return f"/tmp/{result[0]}" if result else "not found"
 
     def get_advert_object(self) -> Advert:
         return self.advert
@@ -40,6 +40,7 @@ class AdvertService:
             scope=self._get_scope(),
             salary_from=self._get_salary('from'),
             salary_to=self._get_salary('to'),
+            currency=self._get_currency(),
             company_name=self._get_company_name(),
             city=self._get_city(),
             telegram='',
@@ -73,10 +74,21 @@ class AdvertService:
         salary = 0
         if self.item.get('salary'):
             salary = {
-                'from': self.item['salary'].get('from'),
-                'to': self.item['salary'].get('to')
+                'from': self.item['salary']['from'] if self.item['salary'].get('from') else 0,
+                'to': self.item['salary']['to'] if self.item['salary'].get('to') else 0
             }.get(param)
-        return salary if salary else 0
+        return salary
+
+    def _get_currency(self) -> str:
+        currency: str = CurrencyType.USD
+        if self.item.get('salary'):
+            if self.item['salary'].get('currency'):
+                for i in CurrencyType.ITEMS:
+                    if i == self.item['salary']['currency'].lower():
+                        currency = i
+                    elif self.item['salary']['currency'] == "RUR":
+                        currency = CurrencyType.RUB
+        return currency
 
     def _get_company_name(self) -> str:
         name = ""
