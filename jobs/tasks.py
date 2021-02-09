@@ -10,7 +10,7 @@ def load_hh_data():
     if os.path.exists(AdvertService.get_file_path()):
         with open(AdvertService.get_file_path(), "r") as json_file:
             data = json.load(json_file)
-            count = len(data)
+            count = 0
             for item in data:
                 service = AdvertService(item)
                 advert = service.get_advert_object()
@@ -18,7 +18,7 @@ def load_hh_data():
                     advert.save()
                     advert.stack.set(*service.get_stack_list())
                     advert.save()
-                    count -= 1
+                    count += 1
             msg = f"{count} items are saved"
     else:
         msg = f"File by {AdvertService.get_file_path()} is not found"

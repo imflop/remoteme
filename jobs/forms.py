@@ -20,14 +20,15 @@ class StackModelSelect2TagWidget(ModelSelect2TagWidget):
         cleaned_values = self.queryset.filter(
             **{'pk__in': [v for v in values if v.isdigit()]}
         ).values_list('name', flat=True)
-        cleaned_values = list(cleaned_values)
+        existed_values = list(cleaned_values)
 
         for value in values:
-            obj, created = self.queryset.get_or_create(name=value)
-            if created:
-                cleaned_values.append(obj.name)
+            if not value.isdigit():
+                obj, created = self.queryset.get_or_create(name=value)
+                if created:
+                    existed_values.append(obj.name)
 
-        return ''.join(f'"{c}"' if c == cleaned_values[-1] else f'"{c}" ' for c in cleaned_values)
+        return ''.join(f'"{c}"' if c == existed_values[-1] else f'"{c}" ' for c in existed_values)
 
 
 class AdvertCreateForm(StyledModelForm):
