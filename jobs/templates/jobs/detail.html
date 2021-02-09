@@ -20,7 +20,9 @@
 
             {{ advert.short_description|linebreaks }}
 
-            {{ advert.long_description|linebreaks }}
+            {{ advert.long_description|linebreaksbr }}
+
+            {{ advert.vacancy_source_url|urlize }}
         </div>
     </div>
 {% endblock %}

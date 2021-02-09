@@ -19,7 +19,7 @@ class AdvertAdmin(CreateUpdateDateTimeAdvertAdmin, admin.ModelAdmin):
         'salary_from', 'salary_to', 'company_name', 'tech_stack', 'city', 'updated_at', 'uuid'
     )
     list_display_links = ('id', 'short_description')
-    list_filter = ('created_at', 'scope')
+    list_filter = ('created_at', 'scope', 'is_moderate')
     prepopulated_fields = {'slug_short_description': ('short_description',)}
     search_fields = ('id', 'short_description', 'company_name', 'scope__title')
 
