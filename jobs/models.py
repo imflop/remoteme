@@ -1,6 +1,6 @@
 from uuid import uuid4
 from django.db import models
-from django.core.validators import MaxLengthValidator, EmailValidator
+from django.core.validators import MaxLengthValidator, EmailValidator, URLValidator
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
@@ -42,7 +42,7 @@ class Advert(CreateUpdateDateTimeAbstract):
     slug_short_description = models.SlugField(verbose_name=_('Слуг'), max_length=256)
     long_description = models.TextField(
         verbose_name=_('Полное описание вакансии'),
-        max_length=1024,
+        max_length=8192,
         validators=[MaxLengthValidator],
         help_text=_('Подробно составленное объявление работает лучше, перечислите карьерные возмонжости, '
                     'миссию вашей компании, инженерную культуру компании, etc')
@@ -108,9 +108,13 @@ class Advert(CreateUpdateDateTimeAbstract):
     email = models.EmailField(
         verbose_name=_('email'),
         validators=[EmailValidator],
+        blank=True,
         help_text=_('Электронная почта для обратной связи')
     )
     is_moderate = models.BooleanField(verbose_name=_('Модерация'), default=False)
+    vacancy_source_url = models.URLField(
+        verbose_name=_('URL вакансии'), validators=[URLValidator], blank=True, null=True
+    )
 
     stack = TaggableManager(
         verbose_name=_('Технологический стэк'),

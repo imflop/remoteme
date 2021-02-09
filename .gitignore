@@ -11,5 +11,5 @@ __pycache__
 .pytest_cache/
 htmlcov/
 staticfiles
-celerybeat-schedule.db
+celerybeat-schedule*
 *.orig

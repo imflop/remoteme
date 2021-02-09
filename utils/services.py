@@ -21,7 +21,7 @@ class AdvertService:
 
     @classmethod
     def get_file_path(cls) -> str:
-        pattern = f"hh_{datetime.now().strftime('%Y-%m-%d')}*.json"
+        pattern = f"hh_{datetime.now().strftime('%Y%m%d')}*.json"
         result = fnmatch.filter(os.listdir("/tmp"), pattern)
         return f"/tmp/{result[0]}" if result else "not found"
 
@@ -41,8 +41,9 @@ class AdvertService:
             salary_from=self._get_salary('from'),
             salary_to=self._get_salary('to'),
             currency=self._get_currency(),
-            company_name=self._get_company_name(),
-            city=self._get_city(),
+            company_name=self._get_string_value('employer'),
+            city=self._get_string_value('area'),
+            vacancy_source_url=self._get_vacancy_source_url(),
             telegram='',
             email='email@email.not',
             is_moderate=False
@@ -90,17 +91,11 @@ class AdvertService:
                         currency = CurrencyType.RUB
         return currency
 
-    def _get_company_name(self) -> str:
-        name = ""
-        if self.item.get('employer'):
-            name = self.item['employer'].get('name')
-        return name
+    def _get_string_value(self, key: str) -> str:
+        return self.item[key].get('name') if self.item.get(key) else ""
 
-    def _get_city(self) -> str:
-        name = ""
-        if self.item.get('area'):
-            name = self.item['area'].get('name')
-        return name
+    def _get_vacancy_source_url(self) -> str:
+        return self.item.get('alternate_url') if self.item.get('alternate_url') else "https://hh.ru"
 
     def _get_stack_list(self) -> List[str]:
         stack_list = []
