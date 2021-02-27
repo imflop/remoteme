@@ -16,11 +16,22 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.sitemaps import views as sitemaps_views
+
+from remoteme.sitemaps import AdvertSitemap
+
+
+sitemaps = {
+    'advert': AdvertSitemap
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('select2/', include('django_select2.urls')),
     path('', include('jobs.urls')),
+    path('sitemap.xml', sitemaps_views.index, {'sitemaps': sitemaps}),
+    path('sitemap-<section>.xml', sitemaps_views.sitemap, {'sitemaps': sitemaps},
+         name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 if settings.DEBUG:

@@ -8,25 +8,38 @@
         {% for advert in advert_list %}
             <div class="card mb-3 infinite-item">
                 <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="{% url 'jobs:detail' advert.level advert.uuid %}">
-                            {{ advert.level }} {{ advert.scope }}
-                        </a>
-                        {% if user.is_superuser %}
-                            <a href="#" class="float-right">✏️</a>
-                        {% endif %}
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">
-                        {% currency_icon advert.currency as ci %}
-                        {{ ci }}&nbsp;{{ advert.salary_from }}&dash;{{ advert.salary_to }}
-                    </h6>
-                    {% for s in advert.stack.all %}
-                        <li class="list-inline-item">
-                            <a href="{% url 'jobs:stack' s.slug %}">
-                                <span class="badge badge-warning">{{ s.name }}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5 class="card-title">
+                                <a href="{% url 'jobs:detail' advert.level advert.uuid %}">
+                                    {{ advert.level }} {{ advert.scope }}
+                                </a>
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% currency_icon advert.currency as ci %}
+                                {{ ci }}&nbsp;{{ advert.salary_from }}&dash;{{ advert.salary_to }}
+                            </h6>
+                            <span class="badge bg-light text-dark">🌎&nbsp;{{ advert.city }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            {% for s in advert.stack.all %}
+                                <li class="list-inline-item">
+                                    <a href="{% url 'jobs:stack' s.slug %}">
+                                        <span class="badge badge-warning">{{ s.name }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            {% if user.is_superuser %}
+                                <a href="{% url 'admin:jobs_advert_change' advert.id %}" class="float-right">✏️</a>
+                            {% endif %}
+                            <time title="{{ advert.created_at|date:"c" }}">
+                                {{ advert.created_at|date:"j E Y" }}
+                                <small class="text-muted">в {{ advert.created_at|date:"H:i" }}</small>
+                            </time>
+                        </div>
+                    </div>
                 </div>
             </div>
         {% endfor %}

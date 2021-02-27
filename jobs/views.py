@@ -9,15 +9,16 @@ from django_select2.views import AutoResponseView
 from jobs.models import Advert
 from jobs.forms import AdvertCreateForm
 from jobs.filters import AdvertFilter
+from utils.mixins import PageMetaViewMixin
 from utils.paginator import DiggPaginator
 
 
-class AdvertBaseListView(ListView):
+class AdvertBaseListView(ListView, PageMetaViewMixin):
     """
     Базовая view для вывода списка объявлений
     """
     model = Advert
-    paginate_by = 11
+    paginate_by = 23
     paginator_class = DiggPaginator
     template_name = 'jobs/list.html'
 

@@ -21,7 +21,7 @@ class AdvertService:
 
     @classmethod
     def get_file_path(cls) -> str:
-        pattern = f"hh_{datetime.now().strftime('%Y%m%d')}*.json"
+        pattern = f"hh_{datetime.now().strftime('%Y%m%d')}_*.json"
         result = fnmatch.filter(os.listdir("/tmp"), pattern)
         return f"/tmp/{result[0]}" if result else "not found"
 
