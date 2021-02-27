@@ -49,6 +49,8 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Sitemap
+    'django.contrib.sitemaps',
 ]
 
 THIRD_PARTY_APPS = [
@@ -63,7 +65,7 @@ LOCAL_APPS = [
     'users',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS  + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
