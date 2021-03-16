@@ -13,3 +13,4 @@ htmlcov/
 staticfiles
 celerybeat-schedule*
 *.orig
+old_code
