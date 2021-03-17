@@ -1,0 +1,9 @@
+.git
+.venv
+.idea
+.vscode
+Dockerfile
+rd_data
+pg_data
+old_code
+docker-compose.yml

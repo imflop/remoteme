@@ -1,5 +1,6 @@
 PYTHON_BIN := python3
 VENV_NAME := .venv
+PIP_VERSION := 21.0.1
 POETRY_VERSION := 1.1.4
 PIP_VERSION := 20.2.4
 MAX_LINE_LENGTH := 120
@@ -25,7 +26,7 @@ prepare:
 	&& ${POETRY_BIN} install;
 
 format:
-	python -m black -l ${MAX_LINE_LENGTH} remoteme
+	python -m black . -l ${MAX_LINE_LENGTH}
 
 clean:
 	[ -n "${VENV_NAME}" ] && rm -rf ./${VENV_NAME}

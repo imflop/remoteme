@@ -14,8 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.contrib.sitemaps import views as sitemaps_views
+
+from remoteme.sitemaps import AdvertSitemap
+
+
+API_PREFIX = "api/v1/"
+sitemaps = {"advert": AdvertSitemap}
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path(f"{API_PREFIX}", include("jobs.urls")),
+    path("sitemap.xml", sitemaps_views.index, {"sitemaps": sitemaps}),
+    path(
+        "sitemap-<section>.xml",
+        sitemaps_views.sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
 ]

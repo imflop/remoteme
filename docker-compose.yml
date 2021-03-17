@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  postgres:
+    restart: always
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=127.0.0.1
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data/
+
+  redis:
+    restart: always
+    image: redis
+    volumes:
+      - ./rd_data:/data
+
+  api:
+    restart: always
+    build: .
+    command: /app/.ci/remoteme-entrypoint.sh
+    environment:
+      - SECRET_KEY=secret
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=postgres
+      - DEBUG=False
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8080:8080
+
+volumes:
+  pg_data:
+  rd_data:
