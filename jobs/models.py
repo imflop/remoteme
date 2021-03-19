@@ -43,8 +43,8 @@ class Stack(CreateUpdateDateTimeAbstract):
     slug_name = models.SlugField(verbose_name=_("Слуг"), max_length=128)
 
     class Meta:
-        verbose_name = _("Таг")
-        verbose_name_plural = _("Таги")
+        verbose_name = _("Cтек технологий")
+        verbose_name_plural = _("Cтек технологий")
 
     def __str__(self):
         return f"{self.name}"
