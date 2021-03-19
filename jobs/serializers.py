@@ -27,4 +27,4 @@ class AdvertSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advert
-        fields = ("uuid", "short_description", "created_at", "long_description", "stack", "scope")
+        fields = ("uuid", "short_description", "created_at", "stack", "scope", "salary_from", "salary_to", "city")
