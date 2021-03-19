@@ -74,14 +74,14 @@ class Advert(CreateUpdateDateTimeAbstract):
         verbose_name=_("Уровень кандидата"), max_length=16, choices=LevelType.CHOICES, default=LevelType.JUNIOR
     )
     scope = models.ForeignKey(
-        to="Scope",
+        to=Scope,
         verbose_name=_("Область работы"),
         on_delete=models.SET_NULL,
         null=True,
         blank=False,
         help_text=_("Облать работы или тип конкретной специализации кандидата"),
     )
-    stack = models.ManyToManyField(to=Stack, related_name="stack", verbose_name=_("Стэк технологий"))
+    stack = models.ManyToManyField(to=Stack, related_name="adverts", verbose_name=_("Стэк технологий"))
     salary_from = models.PositiveIntegerField(verbose_name=_("Зарплата от"), help_text=_("Уровень зарплаты от"))
     salary_to = models.PositiveIntegerField(
         verbose_name=_("Зарплата до"), help_text=_("Уровень зарплаты до"), blank=True, null=True
