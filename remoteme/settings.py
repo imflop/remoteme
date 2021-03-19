@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
-from corsheaders.defaults import default_headers
+from corsheaders.defaults import default_headers, default_methods
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -57,9 +57,9 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -150,12 +150,10 @@ STATIC_ROOT = f"{BASE_DIR}/staticfiles"
 # CORS
 # https://github.com/adamchainz/django-cors-headers
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = [
-    "http://0.0.0.0:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
+CORS_ALLOWED_ORIGINS = ["http://localhost:8081", "http://localhost:3000"]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'cache-control',
 ]
 
-CORS_ALLOW_HEADERS = default_headers + (
-    'cache-control',
-)
+CORS_ALLOW_METHODS = list(default_methods)
