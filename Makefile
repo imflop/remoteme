@@ -28,6 +28,9 @@ prepare:
 format:
 	python -m black . -l ${MAX_LINE_LENGTH}
 
+lint:
+	python -m isort .
+
 clean:
 	[ -n "${VENV_NAME}" ] && rm -rf ./${VENV_NAME}
 	find . -name "*.pyc" -delete

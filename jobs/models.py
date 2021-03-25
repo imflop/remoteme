@@ -1,13 +1,15 @@
+from uuid import uuid4
+from unidecode import unidecode
+
+from django.conf import settings
+from django.contrib.postgres.search import TrigramSimilarity
+from django.core.validators import EmailValidator, MaxLengthValidator, URLValidator
 from django.db import models
-from django.core.validators import MaxLengthValidator, EmailValidator, URLValidator
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
-from unidecode import unidecode
-from uuid import uuid4
-
-from jobs.collections import LevelType, CurrencyType
+from jobs.collections import CurrencyType, LevelType
 from jobs.managers import AdvertManager
 from utils.models import CreateUpdateDateTimeAbstract
 
@@ -123,6 +125,18 @@ class Advert(CreateUpdateDateTimeAbstract):
     vacancy_source_url = models.URLField(
         verbose_name=_("URL вакансии"), validators=[URLValidator], blank=True, null=True
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_("Пользователь"),
+        on_delete=models.SET_NULL,
+        related_name="advert",
+        null=True,
+        blank=True,
+    )
+    similarity_coefficient = models.FloatField(
+        verbose_name=_("Коэффициент схожести"), default=0.0, null=True, blank=True, editable=False
+    )
+    similar_adverts = models.JSONField(verbose_name=_("Похожие посты"), null=True, blank=True)
 
     objects = AdvertManager.as_manager()
 
@@ -147,3 +161,13 @@ class Advert(CreateUpdateDateTimeAbstract):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.slug_short_description = slugify(unidecode(self.short_description), allow_unicode=True)
         super().save(force_insert, force_update, using, update_fields)
+
+    @classmethod
+    def get_similar_adverts(cls, pk: int, text: str):
+        adverts = (
+            cls.objects.all()
+            .exclude(pk=pk)
+            .annotate(similarity=TrigramSimilarity("long_description", text))
+            .filter(similarity__gte=0.65)
+        )
+        return adverts

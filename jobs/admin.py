@@ -1,6 +1,8 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils.translation import gettext as _
 
-from jobs.models import Scope, Stack, Advert
+from jobs.models import Advert, Scope, Stack
+from jobs.tasks import calculate_similarity_coefficient
 from utils.admin import CreateUpdateDateTimeAdvertAdmin
 
 
@@ -44,3 +46,10 @@ class AdvertAdmin(CreateUpdateDateTimeAdvertAdmin, admin.ModelAdmin):
     prepopulated_fields = {"slug_short_description": ("short_description",)}
     search_fields = ("id", "short_description", "company_name", "scope__title")
     filter_horizontal = ("stack",)
+
+    def recalculate_similarity_coefficient(self, request, queryset):
+        for item in queryset:
+            calculate_similarity_coefficient.delay(item.id)
+        self.message_user(request, _("Коэффициенты пересчитываются, это займет время"), messages.SUCCESS)
+
+    recalculate_similarity_coefficient.short_description = _("Пересчитать коэффициент")

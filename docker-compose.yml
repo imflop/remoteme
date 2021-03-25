@@ -24,13 +24,14 @@ services:
     build: .
     command: /app/.ci/remoteme-entrypoint.sh
     environment:
+      - DEBUG=False
       - SECRET_KEY=secret
+      - POSTGRES_HOST=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
       - POSTGRES_DB=postgres
-      - DEBUG=False
+      - POSTGRES_PORT=5432
+      - REDIS=redis
     depends_on:
       - postgres
       - redis

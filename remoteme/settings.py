@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+
 from corsheaders.defaults import default_headers, default_methods
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,27 +33,27 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
-DJANGO_APPS = [
-    "django.contrib.admin",
+DJANGO_APPS = (
     "django.contrib.auth",
+    "django.contrib.admin",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Sitemap
     "django.contrib.sitemaps",
-]
+)
 
-THIRD_PARTY_APPS = [
+THIRD_PARTY_APPS = (
     "rest_framework",
     "corsheaders",
-]
+)
 
-LOCAL_APPS = [
-    "settings",
+LOCAL_APPS = (
     "users",
+    "settings",
     "jobs",
-]
+)
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -153,7 +154,14 @@ STATIC_ROOT = f"{BASE_DIR}/staticfiles"
 CORS_ALLOWED_ORIGINS = ["http://localhost:8081", "http://localhost:3000"]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'cache-control',
+    "cache-control",
 ]
 
 CORS_ALLOW_METHODS = list(default_methods)
+
+
+# CELERY
+# ------------------------------------------------------------------------------
+# TODO uncomment later
+# CELERY_BROKER_URL = f"{os.environ.get('REDIS')}://{os.environ.get('REDIS')}:6379/0"
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"

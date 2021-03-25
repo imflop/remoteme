@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from jobs.models import Advert, Stack, Scope
+from jobs.models import Advert, Scope, Stack
 
 
 class ScopeSerializer(serializers.ModelSerializer):
@@ -27,4 +27,16 @@ class AdvertSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advert
-        fields = ("uuid", "short_description", "created_at", "stack", "scope", "salary_from", "salary_to", "city")
+        fields = (
+            "uuid",
+            "short_description",
+            "created_at",
+            "stack",
+            "scope",
+            "salary_from",
+            "salary_to",
+            "city",
+            "company_name",
+            "currency",
+            "is_moderate",
+        )

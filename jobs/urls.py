@@ -1,7 +1,6 @@
 from django.urls import path
 
-
-from jobs.views import AdvertListView, AdvertDetailView
+from jobs.views import AdvertDetailView, AdvertListView
 
 app_name = "jobs"
 
