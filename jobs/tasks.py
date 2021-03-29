@@ -1,6 +1,4 @@
-import json
-from pathlib import Path
-
+import httpx
 from django.db import transaction
 from pydantic import parse_obj_as
 
@@ -12,38 +10,40 @@ from utils.services import AdvertService, get_file_path, get_stack_list
 
 @app.task()
 def load_hh_data():
-    if Path(get_file_path()).exists():
+    headers = {"user-agent": "remoteme/1.0.1"}
+    r = httpx.get("http://127.0.0.1:8888/hh", timeout=15, headers=headers)
+
+    if r.status_code == 200:
         count = 0
+        data = r.json()
+        service = AdvertService()
 
-        with open(get_file_path(), "r") as json_file:
-            data = json.load(json_file)
-            service = AdvertService()
+        for d in data:
+            item_object = parse_obj_as(Item, d)
 
-            for d in data:
-                item_object = parse_obj_as(Item, d)
-
-                if item_object.salary:
-                    if (
+            if item_object.salary:
+                if (
                         item_object.salary.from_value
                         and item_object.salary.from_value > 0
                         and item_object.salary.to
                         and item_object.salary.to > 0
-                    ):
-                        count += 1
+                ):
+                    count += 1
 
-                        with transaction.atomic():
-                            advert = service.init_advert(item_object)
+                    with transaction.atomic():
+                        advert = service.init_advert(item_object)
+                        advert.save()
+
+                        if item_object.key_skills:
+                            advert.stack.add(*get_stack_list(item_object.key_skills))
                             advert.save()
 
-                            if item_object.key_skills:
-                                advert.stack.add(*get_stack_list(item_object.key_skills))
-                                advert.save()
-
-                            calculate_similarity_coefficient.delay(advert.pk)
+                        calculate_similarity_coefficient.delay(advert.pk)
 
         msg = f"{count} items are saved"
+
     else:
-        msg = f"File at {get_file_path()} was not found"
+        msg = f"Error while getting data {r.status_code}: {r.text}"
 
     return msg
 

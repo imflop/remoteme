@@ -19,6 +19,12 @@ services:
     volumes:
       - ./rd_data:/data
 
+  grabbers:
+    restart: always
+    image: imflop/grabbers:latest
+    ports:
+      - 8888:8888
+
   api:
     restart: always
     build: .
@@ -35,6 +41,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - grabbers
     ports:
       - 8080:8080
 
