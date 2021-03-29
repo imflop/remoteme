@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "remoteme"
+version = "1.0.0"
+description = ""
+authors = ["imflop <imflop@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+djangorestframework = "^3.12.2"
+django-redis = "^4.12.1"
+gunicorn = "^20.0.4"
+celery = "^5.0.5"
+sentry-sdk = "^1.0.0"
+psycopg2-binary = "^2.8.6"
+Unidecode = "^1.2.0"
+django-cors-headers = "^3.7.0"
+pydantic = "^1.8.1"
+httpx = "^0.17.1"
+
+[tool.poetry.dev-dependencies]
+black = "^20.8b1"
+pytest = "^6.2.2"
+factory-boy = "^3.2.0"
+pytest-cov = "^2.11.1"
+pytest-django = "^4.1.0"
+ipython = "^7.21.0"
+isort = "^5.8.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
