@@ -151,7 +151,7 @@ STATIC_ROOT = f"{BASE_DIR}/static"
 # CORS
 # https://github.com/adamchainz/django-cors-headers
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = ["http://localhost:8081", "http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:10080", "http://localhost:80"]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "cache-control",
