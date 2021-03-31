@@ -12,16 +12,12 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - ./pg_data:/var/lib/postgresql/data/
-    networks:
-      - database_network
 
   redis:
     restart: always
     image: redis
     volumes:
       - ./rd_data:/data
-    networks:
-      - redis_network
 
   api:
     restart: always
@@ -43,10 +39,6 @@ services:
       - 8080:8080
     volumes:
       - ./static_data:/app/static
-    networks:
-      - database_network
-      - redis_network
-      - nginx_network
 
   nginx:
     image: nginx:latest
@@ -57,18 +49,8 @@ services:
       - api
     ports:
       - 80:80
-    networks:
-      - nginx_network
 
 volumes:
   pg_data:
   rd_data:
   static_data:
-
-networks:
-  nginx_network:
-    driver: bridge
-  database_network:
-    driver: bridge
-  redis_network:
-    driver: bridge
