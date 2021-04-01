@@ -15,6 +15,8 @@ from pathlib import Path
 
 from corsheaders.defaults import default_headers, default_methods
 
+from utils.utils import str2bool
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str2bool(os.environ.get("DEBUG", "True"))
 
 ALLOWED_HOSTS = ["*"]
 
@@ -151,7 +153,7 @@ STATIC_ROOT = f"{BASE_DIR}/static"
 # CORS
 # https://github.com/adamchainz/django-cors-headers
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = ["http://localhost:8081", "http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:10080", "http://localhost:80"]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "cache-control",
@@ -162,6 +164,47 @@ CORS_ALLOW_METHODS = list(default_methods)
 
 # CELERY
 # ------------------------------------------------------------------------------
-# TODO uncomment later
-# CELERY_BROKER_URL = f"{os.environ.get('REDIS')}://{os.environ.get('REDIS')}:6379/0"
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+
+CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS')}:6379/0"
+
+
+# CELERY
+# ------------------------------------------------------------------------------
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] [%(funcName)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+        },
+        'django.request': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False
+        },
+        'django.db.backends': {
+            'level': 'WARNING',
+            'handlers': ['console'],
+            'propagate': False
+        },
+        'remoteme': {
+            'level': 'INFO',
+            'handlers': ['console'],
+        },
+    }
+}

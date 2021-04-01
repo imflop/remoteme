@@ -19,12 +19,6 @@ services:
     volumes:
       - ./rd_data:/data
 
-  grabbers:
-    restart: always
-    image: imflop/grabbers:latest
-    ports:
-      - 8888:8888
-
   api:
     restart: always
     build: .
@@ -38,13 +32,34 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PORT=5432
       - REDIS=redis
+      - GRABBERS_HOST=grabbers
     depends_on:
       - postgres
       - redis
       - grabbers
     ports:
       - 8080:8080
+    volumes:
+      - ./logs:/app/logs
+      - ./static_data:/app/static
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./static_data:/static
+    depends_on:
+      - api
+    ports:
+      - 80:80
+
+  grabbers:
+    restart: always
+    container_name: grabbers
+    hostname: grabbers
+    image: imflop/grabbers:latest
 
 volumes:
   pg_data:
   rd_data:
+  static_data:

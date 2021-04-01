@@ -21,7 +21,8 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     "parser-5-min-after-midnight": {
         "task": "jobs.tasks.load_hh_data",
-        "schedule": crontab(minute=5, hour=0),
+        # "schedule": crontab(minute=5),
+        "schedule": 300.0,
     },
 }
 
