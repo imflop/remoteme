@@ -15,3 +15,4 @@ celerybeat-schedule*
 *.orig
 old_code
 *_data
+logs

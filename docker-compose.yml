@@ -32,12 +32,15 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PORT=5432
       - REDIS=redis
+      - GRABBERS_HOST=grabbers
     depends_on:
       - postgres
       - redis
+      - grabbers
     ports:
       - 8080:8080
     volumes:
+      - ./logs:/app/logs
       - ./static_data:/app/static
 
   nginx:
@@ -49,6 +52,12 @@ services:
       - api
     ports:
       - 80:80
+
+  grabbers:
+    restart: always
+    container_name: grabbers
+    hostname: grabbers
+    image: imflop/grabbers:latest
 
 volumes:
   pg_data:

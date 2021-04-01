@@ -162,6 +162,5 @@ CORS_ALLOW_METHODS = list(default_methods)
 
 # CELERY
 # ------------------------------------------------------------------------------
-# TODO uncomment later
-# CELERY_BROKER_URL = f"{os.environ.get('REDIS')}://{os.environ.get('REDIS')}:6379/0"
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+
+CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS')}:6379/0"

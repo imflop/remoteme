@@ -1,17 +1,27 @@
+import os
+
 import httpx
 from django.db import transaction
 from pydantic import parse_obj_as
 
+from django.conf import settings
+
 from jobs.models import Advert
 from remoteme.celery_remoteme import app
 from utils.dtos.hh import Item
-from utils.services import AdvertService, get_file_path, get_stack_list
+from utils.services import AdvertService, get_stack_list
+
+
+if settings.DEBUG:
+    GRABBERS_HOST = "localhost"
+else:
+    GRABBERS_HOST = os.environ.get("GRABBERS_HOST")
 
 
 @app.task()
 def load_hh_data():
     headers = {"user-agent": "remoteme/1.0.1"}
-    r = httpx.get("http://127.0.0.1:8888/hh", timeout=15, headers=headers)
+    r = httpx.get(f"http://{GRABBERS_HOST}:8888/hh", timeout=20, headers=headers)
 
     if r.status_code == 200:
         count = 0
