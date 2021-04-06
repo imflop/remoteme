@@ -2,22 +2,81 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from jobs.models import Advert
-from jobs.serializers import AdvertSerializer
+from jobs.selectors import get_advert, get_adverts, get_scope, get_stack
+from jobs.serializers import (AdvertCreateSerializer, AdvertDetailSerializer,
+                              AdvertSerializer, ScopeSerializer,
+                              StackSerializer)
+from jobs.services import create_advert
+from utils.mixins import ApiErrorsMixin
+from utils.pagination import LimitOffsetPagination, get_paginated_response
+
+
+class ScopeListView(APIView):
+    """
+    Scopes
+    """
+
+    def get(self, request) -> Response:
+        scopes = get_scope()
+        serializer = ScopeSerializer(scopes, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class StackListView(APIView):
+    """
+    Stack
+    """
+
+    def get(self, request) -> Response:
+        stack = get_stack()
+        serializer = StackSerializer(stack, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class AdvertPagination(LimitOffsetPagination):
+    default_limit = 10
 
 
 class AdvertListView(APIView):
+    """
+    Adverts
+    """
+
     def get(self, request):
-        adverts = Advert.objects.only_moderated()
-        s = AdvertSerializer(adverts, many=True)
-        return Response(data=s.data, status=status.HTTP_200_OK)
+        adverts = get_adverts()
+
+        return get_paginated_response(
+            pagination_class=AdvertPagination,
+            serializer_class=AdvertSerializer,
+            queryset=adverts,
+            request=request,
+            view=self,
+        )
 
 
 class AdvertDetailView(APIView):
-    def get(self, request, uuid):
+    """
+    Single advert by requested params
+    """
+
+    def get(self, request, uuid) -> Response:
         if uuid:
-            advert = Advert.objects.filter(uuid=uuid).first()
-            s = AdvertSerializer(advert, many=False)
-            return Response(data=s.data, status=status.HTTP_200_OK)
+            advert = get_advert(fetched_by=uuid)
+            serializer = AdvertDetailSerializer(advert, many=False)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdvertCreateView(ApiErrorsMixin, APIView):
+    """
+    Create advert from form
+    """
+
+    def post(self, request) -> Response:
+        serializer = AdvertCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        create_advert(serializer.validated_data)
+
+        return Response(status.HTTP_201_CREATED)

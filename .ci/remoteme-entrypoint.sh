@@ -2,7 +2,7 @@
 
 while ! curl http://postgres:5432/ 2>&1 | grep '52'; do sleep 1; done
 
-source venv/bin/activate
+source /venv/bin/activate
 mkdir -p logs
 
 python manage.py migrate --noinput

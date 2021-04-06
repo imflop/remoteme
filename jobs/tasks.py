@@ -1,16 +1,15 @@
-import os
 import logging
+import os
+
 import httpx
+from django.conf import settings
 from django.db import transaction
 from pydantic import parse_obj_as
-
-from django.conf import settings
 
 from jobs.models import Advert
 from remoteme.celery_remoteme import app
 from utils.dtos.hh import Item
 from utils.services import AdvertService, get_stack_list
-
 
 if settings.DEBUG:
     GRABBERS_HOST = "localhost"
@@ -36,10 +35,10 @@ def load_hh_data():
 
             if item_object.salary:
                 if (
-                        item_object.salary.from_value
-                        and item_object.salary.from_value > 0
-                        and item_object.salary.to
-                        and item_object.salary.to > 0
+                    item_object.salary.from_value
+                    and item_object.salary.from_value > 0
+                    and item_object.salary.to
+                    and item_object.salary.to > 0
                 ):
                     count += 1
 

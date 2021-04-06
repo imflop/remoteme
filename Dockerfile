@@ -1,6 +1,8 @@
 ARG IMAGE="python:3.9.1-slim-buster"
 
-FROM $IMAGE
+FROM $IMAGE as builder
+
+ARG PY_PROJECT=remoteme
 
 ENV PYTHONUNBUFFERED 1
 ENV POETRY_VERSION=1.1.4
@@ -13,14 +15,27 @@ WORKDIR /app
 
 COPY poetry.lock pyproject.toml /app/
 
-RUN python3 -m venv /app/venv \
-   && . /app/venv/bin/activate \
+RUN python3 -m venv /venv \
+   && . /venv/bin/activate \
    && curl -sSL https://raw.githubusercontent.com/sdispater/poetry/${POETRY_VERSION}/get-poetry.py > get-poetry.py \
    && python get-poetry.py -y --version ${POETRY_VERSION} \
    && rm get-poetry.py \
    && ${HOME}/.poetry/bin/poetry install --no-root;
 
-COPY . /app/
+COPY . /app/${PY_PROJECT}
 
-RUN . /app/venv/bin/activate \
+RUN . /venv/bin/activate \
    && ${HOME}/.poetry/bin/poetry install;
+
+
+FROM $IMAGE
+
+ENV PYTHONUNBUFFERED 1
+ENV PY_PROJECT=remoteme
+ENV PATH="/venv/bin:${PATH}"
+
+COPY --from=builder /app/${PY_PROJECT} /app
+COPY --from=builder /venv /venv
+COPY .ci /app/.ci
+
+WORKDIR /app
