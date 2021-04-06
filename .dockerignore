@@ -8,3 +8,6 @@ pg_data
 static_data_data
 old_code
 docker-compose.yml
+logs
+static_data
+config

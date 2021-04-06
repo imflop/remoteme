@@ -1,13 +1,15 @@
+import typing as t
 from uuid import uuid4
-from unidecode import unidecode
 
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
-from django.core.validators import EmailValidator, MaxLengthValidator, URLValidator
+from django.core.validators import (EmailValidator, MaxLengthValidator,
+                                    URLValidator)
 from django.db import models
 from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from unidecode import unidecode
 
 from jobs.collections import CurrencyType, LevelType
 from jobs.managers import AdvertManager
@@ -50,6 +52,10 @@ class Stack(CreateUpdateDateTimeAbstract):
 
     def __str__(self):
         return f"{self.name}"
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None) -> None:
+        self.slug_name = slugify(unidecode(self.name), allow_unicode=True)
+        super().save(force_insert, force_update, using, update_fields)
 
 
 class Advert(CreateUpdateDateTimeAbstract):
@@ -158,12 +164,12 @@ class Advert(CreateUpdateDateTimeAbstract):
             },
         )
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None) -> None:
         self.slug_short_description = slugify(unidecode(self.short_description), allow_unicode=True)
         super().save(force_insert, force_update, using, update_fields)
 
     @classmethod
-    def get_similar_adverts(cls, pk: int, text: str):
+    def get_similar_adverts(cls, pk: int, text: str) -> t.Iterable["Advert"]:
         adverts = (
             cls.objects.all()
             .exclude(pk=pk)
