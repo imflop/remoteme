@@ -49,6 +49,7 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     "rest_framework",
     "corsheaders",
+    "drf_yasg",
 )
 
 LOCAL_APPS = (
@@ -153,6 +154,7 @@ STATIC_ROOT = f"{BASE_DIR}/static"
 # CORS
 # https://github.com/adamchainz/django-cors-headers
 # ------------------------------------------------------------------------------
+
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:10080", "http://localhost:80"]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -172,39 +174,42 @@ CELERY_BROKER_URL = f"redis://{os.environ.get('REDIS')}:6379/0"
 # ------------------------------------------------------------------------------
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] [%(funcName)s] %(message)s",
-            'datefmt': "%d/%b/%Y %H:%M:%S"
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "verbose": {
+            "format": "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] [%(funcName)s] %(message)s",
+            "datefmt": "%d/%b/%Y %H:%M:%S",
         },
     },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        }
+    "handlers": {"console": {"level": "DEBUG", "class": "logging.StreamHandler", "formatter": "verbose"}},
+    "loggers": {
+        "django": {
+            "level": "WARNING",
+            "handlers": ["console"],
+        },
+        "django.request": {"level": "DEBUG", "handlers": ["console"], "propagate": False},
+        "django.db.backends": {"level": "WARNING", "handlers": ["console"], "propagate": False},
+        "remoteme": {
+            "level": "INFO",
+            "handlers": ["console"],
+        },
     },
-    'loggers': {
-        'django': {
-            'level': 'WARNING',
-            'handlers': ['console'],
-        },
-        'django.request': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': False
-        },
-        'django.db.backends': {
-            'level': 'WARNING',
-            'handlers': ['console'],
-            'propagate': False
-        },
-        'remoteme': {
-            'level': 'INFO',
-            'handlers': ['console'],
-        },
+}
+
+
+REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": "utils.handlers.exception_errors_format_handler",
+}
+
+
+# CACHE
+# ------------------------------------------------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{os.environ.get('REDIS')}:6379/1",
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient", "PICKLE_VERSION": -1},
+        "KEY_PREFIX": "remoteme",
     }
 }
