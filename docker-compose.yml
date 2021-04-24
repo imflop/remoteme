@@ -43,16 +43,6 @@ services:
       - ./logs:/app/logs
       - ./static_data:/app/static
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./config/nginx:/etc/nginx/conf.d
-      - ./static_data:/static
-    depends_on:
-      - api
-    ports:
-      - 80:80
-
   grabbers:
     restart: always
     container_name: grabbers
