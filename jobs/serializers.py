@@ -34,6 +34,10 @@ class StackFlatSerializer(serializers.ModelSerializer):
         return instance.name
 
 
+class AdvertFilterSerializer(serializers.Serializer):
+    scope = serializers.IntegerField(required=False)
+
+
 class AdvertSerializer(serializers.ModelSerializer):
     stack = StackFlatSerializer(read_only=True, many=True)
     scope = ScopeFlatSerializer(read_only=True)
