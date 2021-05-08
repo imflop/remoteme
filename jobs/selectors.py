@@ -3,6 +3,7 @@ import uuid
 
 from django.core.cache import cache
 
+from jobs.filters import AdvertFilter
 from jobs.models import Advert, Scope, Stack
 
 
@@ -28,8 +29,12 @@ def get_stack() -> t.Iterable[Stack]:
     return stacks
 
 
-def get_adverts() -> t.Iterable[Advert]:
-    return Advert.objects.only_moderated()
+def get_adverts(*, filters=None) -> t.Iterable[Advert]:
+    filters = filters or {}
+
+    qs = Advert.objects.only_moderated()
+
+    return AdvertFilter(filters, qs).qs
 
 
 def get_advert(*, fetched_by: uuid) -> t.Optional[Advert]:

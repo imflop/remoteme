@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from jobs.selectors import get_advert, get_adverts, get_scope, get_stack
 from jobs.serializers import (AdvertCreateSerializer, AdvertDetailSerializer,
                               AdvertSerializer, ScopeSerializer,
-                              StackSerializer)
+                              StackSerializer, AdvertFilterSerializer)
 from jobs.services import create_advert
 from utils.mixins import ApiErrorsMixin
 from utils.pagination import LimitOffsetPagination, get_paginated_response
@@ -43,7 +43,10 @@ class AdvertListView(APIView):
     """
 
     def get(self, request):
-        adverts = get_adverts()
+        filter_serializer = AdvertFilterSerializer(data=request.query_params)
+        filter_serializer.is_valid(raise_exception=True)
+
+        adverts = get_adverts(filters=filter_serializer.validated_data)
 
         return get_paginated_response(
             pagination_class=AdvertPagination,
